@@ -15,8 +15,8 @@ typedef void (*pFunction)(void);
 
 #define NULL (0)
 
-#define TRUE  1
-#define FALSE 0
+#define TRUE	1
+#define FALSE 	0
 
 #define SUCCESS 0
 #define FAILURE 1
@@ -27,12 +27,12 @@ typedef void (*pFunction)(void);
 #define OS_ASSERT(condition)                                                \
 	do                                                                      \
 	{                                                                       \
-	if ((condition) != TRUE)                                             	\
-	{                                                                       \
-		printf("\nassert in %s %d\n", __FILE__, __LINE__);			    	\
+		if ((condition) != TRUE)                                            \
+		{                                                                   \
+			printf("\nassert in %s %d\n", __FILE__, __LINE__);			    \
+		}                                                                   \
 	}                                                                       \
-	}                                                                       \
-while (0)
+	while (0)
 
 typedef union
 {

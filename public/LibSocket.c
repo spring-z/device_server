@@ -6,6 +6,9 @@
 
 
 
+
+
+
 int StartupSocket(const unsigned int port)
 {
     int listenfd;
@@ -13,8 +16,8 @@ int StartupSocket(const unsigned int port)
 
     if( (listenfd = socket(PF_INET, SOCK_STREAM, 0)) == -1 )
     {
-		perror("sock error:");
-        return 0;
+		error("sock error:");
+        return -1;
     }
 
     memset(&servaddr, 0, sizeof(servaddr));
@@ -24,14 +27,14 @@ int StartupSocket(const unsigned int port)
 
     if( bind(listenfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) == -1)
     {
-		perror("blind error:");
-        return 0;
+		error("blind error:");
+        return -1;
     }
 
     if( listen(listenfd, MAX_LISTEN_QUE) == -1)
     {
-        perror("listen error:");
-        return 0;
+        error("listen error:");
+        return -1;
     }
 	
     return listenfd;
