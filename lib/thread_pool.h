@@ -39,7 +39,7 @@ struct tp_thread_info_s{
 	tp_work			th_work;
 	tp_work_desc	th_job;
 	TPBOOL			exit;
-	TPBOOL			is_wait; // CAUTION锛氬湪鏈皟鐢╬thread_cond_wait鏃堕�杩噋thread_cond_signal鍙戦�淇″彿浼氶�鎴愪俊鍙蜂涪澶憋紒
+	TPBOOL			is_wait; 
 };
 
 //main thread pool struct

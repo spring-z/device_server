@@ -142,8 +142,6 @@ void tp_close(tp_thread_pool *this) {
  *	job: user task para
  * return:
  */
-
-// 鍋跺皵杩樹細鍑虹幇淇″彿涓㈠け锛佹鏌s_wait鏃跺姞涓婇攣锛岄攣鎴愬姛鏃�// 涓�畾鏄繘鍏ヤ簡pthread_cond_wait銆�
 #define TP_THREAD_IS_WAIT(idx) \
 do \
 { \
@@ -299,7 +297,6 @@ static TPBOOL tp_delete_thread(tp_thread_pool *this) {
 	} else {
 		this->thread_info[idx].is_busy = TRUE;
 
-		// 鍏堥攣瀹�tp_lock闃叉cur_th_num鍑洪敊
 		pthread_mutex_lock(&this->tp_lock);
 		pthread_mutex_unlock(&this->thread_info[idx].thread_lock);
 		//after deleting idle thread, current thread num -1
@@ -351,7 +348,6 @@ static int tp_get_tp_status(tp_thread_pool *this) {
 	}
 }
 
-// 杩欎釜鍑芥暟鍙槸涓轰簡娑堥櫎缂栬瘧鍣ㄨ鍛�
 void *tp_thread_exit() {
 	pthread_exit(NULL);
 }
@@ -442,6 +438,7 @@ void *thread_fun(void *param)
 	return NULL;
 }
 
+/*
 int main(int argc,char *argv[])
 {
 
@@ -464,3 +461,4 @@ int main(int argc,char *argv[])
 	}
 }
 #endif
+*/
