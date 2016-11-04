@@ -12,7 +12,7 @@ EpollSet_t* CreatEpollSet(int maxEvents);
 int EpollSetAddFd(EpollSet_t* epollSet, int fd);
 int EpollSetDeleteFd(EpollSet_t* epollSet, int fd);
 int EpollSetWait(EpollSet_t* epollSet);
-
+void EpollSetDestroyed(EpollSet_t* epollSet);
 
 
 

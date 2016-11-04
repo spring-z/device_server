@@ -5,10 +5,6 @@
 #include "LibSocket.h"
 
 
-
-
-
-
 int StartupSocket(const unsigned int port)
 {
     int listenfd;

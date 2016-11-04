@@ -74,8 +74,11 @@ int EpollSetWait(EpollSet_t* epollSet)
 
 
 
-
-
+void EpollSetDestroyed(EpollSet_t* epollSet)
+{
+	free(epollSet);
+	epollSet = NULL;
+}
 
 
 
