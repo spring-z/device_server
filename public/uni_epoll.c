@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "LibSocket.h"
 #include "LibEpoll.h"
+#include "LibLoger.h"
 
 #define MAX_BUFF_LEN 1024
 int buff[MAX_BUFF_LEN];
@@ -13,10 +14,17 @@ int main(void)
 	int fds;
 	int i;
 	
+	info("starting a listen 7222\n");
 	if((listenFd = StartupSocket(7222)) == -1)
 		return -1;
+	
+	info("listen : fd = %d\n", listenFd);
+	
 	if((epollSet = CreatEpollSet(500)) == NULL)
 		return -1;
+	
+	info("creat epoll ok\n", listenFd);
+	
 	if(EpollSetAddFd(epollSet,listenFd) == -1)
 		return -1;
 	

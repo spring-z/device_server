@@ -19,7 +19,7 @@ int CreatMessageQueue(key_t msgKey)
 	{
 		error("msg queue creat error:");
 	}
-	return msg;
+	return msgid;
 }
 
 

@@ -4,19 +4,19 @@
 
 #include <syslog.h>
 
-#if 1	/*log to console*/
+#if 0	/*log to console*/
 #define error(x) perror(x)
-#define info(fmt,...)  printf(fmt, __VA_ARGS__)
+#define info(fmt...)  printf(fmt, __VA_ARGS__)
 #endif
 
-#if 0	/*log to syslog*/
+#if 1	/*log to syslog*/
 #define error(x) perror(x)
-#define info(unsigned char *fmt,args...)  syslog(LOG_INFO, fmt, args)
+#define info(fmt...)  syslog(LOG_INFO, fmt, __VA_ARGS__)
 #endif
 
 #if 0	/*log none*/
 #define error(x) 
-#define info(unsigned char *fmt,args...)  
+#define info(fmt...)  
 #endif
 
 
