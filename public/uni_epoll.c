@@ -11,17 +11,18 @@ int main(void)
 	int listenFd;
 	EpollSet_t* epollSet;
 	int fds;
+	int i;
 	
 	if((listenFd = StartupSocket(7222)) == -1)
 		return -1;
-	if((epollSet = CreatEpollSet(500) == NULL)
+	if((epollSet = CreatEpollSet(500)) == NULL)
 		return -1;
 	if(EpollSetAddFd(epollSet,listenFd) == -1)
 		return -1;
 	
 	while(1)
 	{
-		fds = EpollSetWait(epollSet));
+		fds = EpollSetWait(epollSet);
 		if(fds < 0)
 		{
 			perror("wait error:");
@@ -29,7 +30,7 @@ int main(void)
 		}
 		for(i=0; i<fds; i++)
 		{
-			if(epollSet.events[i].data.fd == listenFd)
+			if(epollSet->events[i].data.fd == listenFd)
 			{
 				int sock_fd;
 				sock_fd = accept(listenFd, (struct sockaddr*)NULL, NULL);
@@ -45,16 +46,16 @@ int main(void)
 			else
 			{	
 				int bytes;
-				bytes = recv(epollSet.events[i].data.fd, buff, MAX_BUFF_LEN, 0);
+				bytes = recv(epollSet->events[i].data.fd, buff, MAX_BUFF_LEN, 0);
 				if(bytes <= 0)
 				{
-					EpollSetDeleteFd(epollSet, epollSet.events[i].data.fd);
-					close(epollSet.events[i].data.fd);
+					EpollSetDeleteFd(epollSet, epollSet->events[i].data.fd);
+					close(epollSet->events[i].data.fd);
 					continue;
 				}
 				else
 				{
-					printf("%s\n",buff);
+					printf("%s\n",(char*)buff);
 				}
 			}
 			

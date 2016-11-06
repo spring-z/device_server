@@ -6,7 +6,7 @@
 
 #if 1	/*log to console*/
 #define error(x) perror(x)
-#define info(unsigned char *fmt,args...)  printf(fmt, args)
+#define info(fmt,...)  printf(fmt, __VA_ARGS__)
 #endif
 
 #if 0	/*log to syslog*/

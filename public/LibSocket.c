@@ -2,7 +2,12 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <string.h>
 #include "LibSocket.h"
+
+
+#define MAX_LISTEN_QUE  	10
 
 
 int StartupSocket(const unsigned int port)

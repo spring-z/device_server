@@ -2,7 +2,10 @@
 #define _LIBEPOLL_H_
 
 
-#typedef struct {
+#include <sys/epoll.h>
+
+
+typedef struct {
 	int epoll_fd;
 	int max_events;
 	struct epoll_event* events;
