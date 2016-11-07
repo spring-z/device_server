@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <sys/epoll.h>
 #include "LibEpoll.h"
-#include "Libloger.h"
+#include "LibLoger.h"
 
 
 EpollSet_t* CreatEpollSet(int maxEvents)
@@ -14,7 +14,7 @@ EpollSet_t* CreatEpollSet(int maxEvents)
 		if(epollSet->events == NULL)
 		{
 			error("epoll events malloc error:");
-			free(epollSet)
+			free(epollSet);
 			epollSet = NULL;
 			return NULL;
 		}
@@ -23,7 +23,7 @@ EpollSet_t* CreatEpollSet(int maxEvents)
 		if(epollSet->epoll_fd < 0)
 		{
 			error("epoll creat error:");
-			free(epollSet)
+			free(epollSet);
 			epollSet = NULL;
 			return NULL;
 		}
@@ -54,7 +54,7 @@ int EpollSetAddFd(EpollSet_t* epollSet, int fd)
 
 int EpollSetDeleteFd(EpollSet_t* epollSet, int fd)
 {
-	if(epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) < 0)
+	if(epoll_ctl(epollSet->epoll_fd, EPOLL_CTL_DEL, fd, NULL) < 0)
 	{
 		error("epoll_ctl del error:");
 		return -1;
