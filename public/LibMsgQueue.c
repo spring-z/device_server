@@ -5,7 +5,7 @@
 
 /*
 	不同进程使用同一个key创建消息队列；
- msg exp:
+ @msg exp:
 	struct msg_st {
 	  long int msg_type;
 	  char text[BUFSIZE];
@@ -36,8 +36,8 @@ int MsgQueueSend(int msgid, void* msg, size_t msgLen)
 }
 
 /* 
- * msgType : if 0: 顺序接收
- * msgLen : 接收数据长度，不包含长整型msgType长度
+ * @msgType : if 0: 顺序接收
+ * @msgLen : 接收数据长度，不包含长整型msgType长度
  *
  */
 int MsgQueueRecv(int msgid, void* msg, size_t msgLen, long int msgType)
