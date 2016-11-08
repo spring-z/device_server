@@ -1,6 +1,7 @@
 #ifndef _LIBMSGQUEUE_H_
 #define _LIBMSGQUEUE_H_
 
+#include <sys/ipc.h>
 
 int CreatMessageQueue(key_t msgKey);
 int MsgQueueSend(int msgid, void* msg, size_t msgLen);

@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "LibLoger.h"
+#include <sys/ipc.h>
+//#include <sys/msg.h>
 
 /*
 	不同进程使用同一个key创建消息队列；
@@ -25,7 +27,7 @@ int CreatMessageQueue(key_t msgKey)
 
 int MsgQueueSend(int msgid, void* msg, size_t msgLen)
 {
-	if (msgsnd(msgid, msg, msgLen, 0) == -1) 
+	if (msgsnd(msgid, msg, msgLen - sizeof(long), 0) == -1) 
 	{
 		error("msg send error:");
 		return -1;
@@ -40,7 +42,7 @@ int MsgQueueSend(int msgid, void* msg, size_t msgLen)
  */
 int MsgQueueRecv(int msgid, void* msg, size_t msgLen, long int msgType)
 {
-	if (msgrcv(msgid, (void *)&msg, msgLen, msgType, 0) == -1) 
+	if (msgrcv(msgid, msg, msgLen - sizeof(long), msgType, 0) == -1) 
     {
       error("msg queue recv error:");
       return -1;
@@ -52,7 +54,7 @@ int MsgQueueDelete(int msgid)
 {
   if (msgctl(msgid, IPC_RMID, 0) == -1) 
   {
-    error("msg queue delete error:");");
+    error("msg queue delete error:");
     return -1;
   }
   return 1;
