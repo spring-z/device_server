@@ -4,14 +4,14 @@
 
 #include <syslog.h>
 
-#if 1	/*log to console*/
+#if 0	/*log to console*/
 #define error(x) perror(x)
-#define info(x)  printf(x)
+#define info(format,...)  printf(format,##__VA_ARGS__)
 #endif
 
-#if 0	/*log to syslog*/ 
+#if 1	/*log to syslog*/ 
 #define error(x) perror(x)
-#define info(x)  syslog(LOG_INFO, x)
+#define info(fmt,...)  syslog(LOG_INFO,fmt,##__VA_ARGS__)
 #endif
 
 #if 0	/*log none*/

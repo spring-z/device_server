@@ -23,7 +23,7 @@ int main(void)
 	if((epollSet = CreatEpollSet(500)) == NULL)
 		return -1;
 	
-	info("creat epoll ok\n", listenFd);
+	info("creat epoll ok: fd = %d\n", listenFd);
 	
 	if(EpollSetAddFd(epollSet,listenFd) == -1)
 		return -1;
