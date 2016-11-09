@@ -19,18 +19,12 @@ TARGET= TestEpoll
 LINKFLAGS=
 
 #obj
-OBJS_PUB= LibEpoll.o LibLoger.o LibSocket.o LibMsgQueue.o
+OBJS_PUB= $(PUB)/LibEpoll.o $(PUB)/LibLoger.o $(PUB)/LibSocket.o $(PUB)/LibMsgQueue.o
 OBJS_MAIN=  uni_epoll.o 
 
 
 OBJS= $(OBJS_MAIN) $(OBJS_PUB) 
 
-
-#CFLAGS += -Wall -Wunused -D_GNU_SOURCE -g -O2 -fPIC
-
-#%.o:%.c
-#	$(CC) -c $(CFLAGS) -I$(INC) $^ -o $@
- 
 
 #taget
 ##########################################################
