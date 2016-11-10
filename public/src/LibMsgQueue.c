@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "LibLoger.h"
 #include <sys/ipc.h>
-//#include <sys/msg.h>
+#include <sys/msg.h>
 
 /*
 	不同进程使用同一个key创建消息队列；

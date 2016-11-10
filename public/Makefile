@@ -1,39 +1,45 @@
-#
-#	Copyright (C) 2016 .
-#
+
+CC=gcc
+
+ROOT=.
+PROJDIR=$(ROOT)/..
+OBJDIR=$(ROOT)/obj
+SRCDIR=$(ROOT)/src
+
+TARGET=MFClient
+SRCS=$(wildcard $(SRCDIR)/*.c)
+srcs=$(notdir $(SRCS))
+OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(srcs))
+
+ifeq ($(DEBUG),1)
+	CFLAGS=-Wall -DDBUG
+else
+	CFLAGS=-Wall -DRELEASE
+endif
 
 
-CC= gcc
+INCS=-I$(PROJDIR)/lib/inc
+INCS+=-I$(PROJDIR)/public/inc
 
-RM= rm -f -r
+LIBS=-lCommon -lPublic 
+LDFLAGS=-L$(PROJDIR)/lib/obj
+LDFLAGS+=-L$(PROJDIR)/public/obj
 
-#directory
-PUB=../public
-LIB_PRAVITE=../lib
-OBJ_DIR=../obj
-INC=../public
+CFLAGS+=$(INCS)
 
-TARGET= TestEpoll
+.PHONY: all clean
 
-#link
-LINKFLAGS=
+all:$(TARGET) $(PROJDIR)/lib/obj/libCommon.a $(PROJDIR)/public/obj/libPublic.a 
 
-#obj
-OBJS_PUB= $(PUB)/LibEpoll.o $(PUB)/LibLoger.o $(PUB)/LibSocket.o $(PUB)/LibMsgQueue.o
-OBJS_MAIN=  uni_epoll.o 
+$(TARGET):$(OBJS)
+	$(CC) -o $@ $(OBJS) 
+	#$(LDFLAGS) 
+	#$(LIBS)
 
-
-OBJS= $(OBJS_MAIN) $(OBJS_PUB) 
-
-
-#taget
-##########################################################
-all: $(TARGET)
-$(TARGET): $(OBJS)
-	$(CC) $(OBJS) -I $(INC) -o $(TARGET) -static $(LINKFLAGS)
-
-.c.o : 
-	$(CC) -c -I$(INC) $< -o $@
+$(OBJS):$(SRCS)
+	$(CC) $(CFLAGS) -c $(patsubst %.o,$(SRCDIR)/%.c,$(notdir $@)) -o $@
 
 clean:
-	$(RM) $(PUB)/*.o $(TARGET)
+	@echo "make" $(TARGET) "clean"
+	rm -f $(ROOT)/$(TARGET) $(OBJDIR)/*.o
+

@@ -1,6 +1,6 @@
 ﻿
 #include "thread_pool.h"
-#include "debug.h"
+#include "LibLoger.h"
 
 //#define TEST_LIB
 
