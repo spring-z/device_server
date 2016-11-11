@@ -3,13 +3,6 @@
 
 //#define TEST_LIB
 
-#define DEBUG_OUT(args...) \
-do{ \
-	char b__[1024]; \
-	sprintf(b__,args); \
-	fprintf(stderr,"%u:[%s,%d] %s",(unsigned long)time(NULL),__FUNCTION__,__LINE__,b__); \
-}while(0)
-
 tp_thread_pool *g_threadpool;
 
 static void *tp_work_thread(void *pthread);
@@ -84,7 +77,7 @@ TPBOOL tp_init(tp_thread_pool *this) {
 			return FALSE;
 		}
 		info("tp_init: creat work thread 0x%X\n",
-				this->thread_info[i].thread_id);
+				(unsigned int)this->thread_info[i].thread_id);
 	}
 
 	//creat manage thread
@@ -93,7 +86,7 @@ TPBOOL tp_init(tp_thread_pool *this) {
 		info("tp_init: creat manage thread failed\n");
 		return FALSE;
 	}
-	info("tp_init: creat manage thread 0x%X\n", this->manage_thread_id);
+	info("tp_init: creat manage thread 0x%X\n", (unsigned int)this->manage_thread_id);
 
 	return TRUE;
 }
@@ -116,7 +109,7 @@ void tp_close(tp_thread_pool *this) {
 			pthread_mutex_destroy(&this->thread_info[i].thread_lock);
 			pthread_cond_destroy(&this->thread_info[i].thread_cond);
 			info("tp_close: kill work thread 0x%X\n",
-					this->thread_info[i].thread_id);
+					(unsigned int)this->thread_info[i].thread_id);
 		}
 	}
 
@@ -125,7 +118,7 @@ void tp_close(tp_thread_pool *this) {
 		pthread_kill(this->manage_thread_id, SIGQUIT);
 		pthread_join(this->manage_thread_id, &status);
 		pthread_mutex_destroy(&this->tp_lock);
-		info("tp_close: kill manage thread 0x%X\n", this->manage_thread_id);
+		info("tp_close: kill manage thread 0x%X\n", (unsigned int)this->manage_thread_id);
 	}
 
 	//free thread struct
@@ -357,7 +350,7 @@ void handle_quit(int signo) {
 	//get current thread id
 	curid = pthread_self();
 
-	info("Handle sig %d,thread id = 0x%X \n", signo, curid);
+	info("Handle sig %d,thread id = 0x%X \n", signo, (unsigned int)curid);
 	tp_thread_exit();
 }
 
@@ -431,7 +424,7 @@ void *thread_fun(void *param)
 	curid = pthread_self();
 	for(i=0;i<100;i++)
 	{
-		info("i=%d,thread id = 0x%X,param = %d\n",i,curid,(int)param);
+		info("i=%d,thread id = 0x%X,param = %d\n",i,(unsigned int)curid,(int)param);
 		sleep(1);
 	}
 	return NULL;

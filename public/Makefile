@@ -34,8 +34,8 @@ CFLAGS+=$(INCS)
 
 all:$(TARGET) $(PROJDIR)/lib/obj/libCommon.a $(PROJDIR)/public/obj/libPublic.a 
 
-#$(TARGET):$(OBJS)
-#	$(CC) -o $@ $(OBJS) $(LINKFLAGS)
+$(TARGET):$(OBJS)
+	$(CC) -o $@ $(OBJS) $(LINKFLAGS)
 	#$(LDFLAGS) 
 	#$(LIBS)
 
