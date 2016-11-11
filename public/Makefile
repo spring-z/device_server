@@ -25,14 +25,17 @@ LIBS=-lCommon -lPublic
 LDFLAGS=-L$(PROJDIR)/lib/obj
 LDFLAGS+=-L$(PROJDIR)/public/obj
 
+
+LINKFLAGS= -lpthread
+
 CFLAGS+=$(INCS)
 
 .PHONY: all clean
 
 all:$(TARGET) $(PROJDIR)/lib/obj/libCommon.a $(PROJDIR)/public/obj/libPublic.a 
 
-$(TARGET):$(OBJS)
-	$(CC) -o $@ $(OBJS) 
+#$(TARGET):$(OBJS)
+#	$(CC) -o $@ $(OBJS) $(LINKFLAGS)
 	#$(LDFLAGS) 
 	#$(LIBS)
 

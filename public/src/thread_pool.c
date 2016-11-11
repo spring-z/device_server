@@ -1,5 +1,4 @@
-﻿
-#include "thread_pool.h"
+﻿#include "thread_pool.h"
 #include "LibLoger.h"
 
 //#define TEST_LIB
@@ -421,8 +420,8 @@ static void *tp_manage_thread(void *pthread) {
 		sleep(MANAGE_INTERVAL);
 	} while (TRUE);
 }
-
-#ifdef TEST_LIB
+/*
+//#ifdef TEST_LIB
 void *thread_fun(void *param)
 {
 	int i;
@@ -438,7 +437,7 @@ void *thread_fun(void *param)
 	return NULL;
 }
 
-/*
+
 int main(int argc,char *argv[])
 {
 
@@ -460,5 +459,4 @@ int main(int argc,char *argv[])
 		sleep(2);
 	}
 }
-#endif
-*/
+//#endif*/
