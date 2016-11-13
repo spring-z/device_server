@@ -1,10 +1,8 @@
 ﻿#include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <pthread.h>
 #include <signal.h>
-#include <errno.h>
 
 #ifndef TPBOOL
 typedef int TPBOOL;
@@ -18,36 +16,43 @@ typedef int TPBOOL;
 #define FALSE 0
 #endif
 
-#define MAX_TH_NUM 10
-#define MIN_TH_NUM 2
-
 #define BUSY_THRESHOLD 0.5	//(busy thread)/(all thread threshold)
-#define MANAGE_INTERVAL 1	//tp manage thread sleep interval
+#define MANAGE_INTERVAL 5	//tp manage thread sleep interval
 
-typedef void* tp_work_desc;
-typedef void* (*tp_work)(void *);
-
+typedef struct tp_work_desc_s tp_work_desc;
+typedef struct tp_work_s tp_work;
 typedef struct tp_thread_info_s tp_thread_info;
 typedef struct tp_thread_pool_s tp_thread_pool;
+
+//thread parm
+struct tp_work_desc_s{
+	char *inum;	//call in
+	char *onum;	//call out
+	int chnum;	//channel num
+};
+
+//base thread struct
+struct tp_work_s{
+	//main process function. user interface
+	void (*process_job)(tp_work *this, tp_work_desc *job);
+};
 
 //thread info
 struct tp_thread_info_s{
 	pthread_t		thread_id;	//thread id num
 	TPBOOL  		is_busy;	//thread status:true-busy;flase-idle
-	pthread_cond_t  thread_cond;	
-	pthread_mutex_t	thread_lock;
-	tp_work			th_work;
-	tp_work_desc	th_job;
-	TPBOOL			exit;
-	TPBOOL			is_wait; 
+	pthread_cond_t          thread_cond;	
+	pthread_mutex_t		thread_lock;
+	tp_work			*th_work;
+	tp_work_desc		*th_job;
 };
 
 //main thread pool struct
 struct tp_thread_pool_s{
 	TPBOOL (*init)(tp_thread_pool *this);
 	void (*close)(tp_thread_pool *this);
-	void (*process_job)(tp_thread_pool *this, tp_work worker, tp_work_desc job);
-	int  (*get_thread_by_id)(tp_thread_pool *this, pthread_t id);
+	void (*process_job)(tp_thread_pool *this, tp_work *worker, tp_work_desc *job);
+	int  (*get_thread_by_id)(tp_thread_pool *this, int id);
 	TPBOOL (*add_thread)(tp_thread_pool *this);
 	TPBOOL (*delete_thread)(tp_thread_pool *this);
 	int (*get_tp_status)(tp_thread_pool *this);
@@ -61,4 +66,3 @@ struct tp_thread_pool_s{
 };
 
 tp_thread_pool *creat_thread_pool(int min_num, int max_num);
-

@@ -6,7 +6,7 @@ PROJDIR=$(ROOT)/..
 OBJDIR=$(ROOT)/obj
 SRCDIR=$(ROOT)/src
 
-TARGET=MFClient
+TARGET=UniTest
 SRCS=$(wildcard $(SRCDIR)/*.c)
 srcs=$(notdir $(SRCS))
 OBJS=$(patsubst %.c,$(OBJDIR)/%.o,$(srcs))
@@ -26,7 +26,7 @@ LDFLAGS=-L$(PROJDIR)/lib/obj
 LDFLAGS+=-L$(PROJDIR)/public/obj
 
 
-LINKFLAGS= -lpthread
+LINKFLAGS= -lpthread -lm
 
 CFLAGS+=$(INCS)
 
