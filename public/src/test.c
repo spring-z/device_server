@@ -1,16 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cJSON.h"
+#include "thread_pool.h"
+#include "LibLoger.h"
 
 
 
 
+tp_thread_pool *g_threadpool;
 
 
+void *thread_fun(void *param)
+{
+	int i;
+	pthread_t curid;			//current thread id
 
-
-
-
+	info("aaaaa\n");
+	
+	
+	//get current thread id
+	curid = pthread_self();
+	for(i=0;i<100;i++)
+	{
+		info("i=%d,thread id = 0x%X,param = %d\n",i,curid,(int)param);
+		sleep(1);
+	}
+	return NULL;
+}
 
 
 
@@ -18,8 +34,8 @@
 int main(void)
 {
 	/* a bunch of json: */
-	char text1[]="{\n\"name\": \"Jack (\\\"Bee\\\") Nimble\", \n\"format\": {\"type\":       \"rect\", \n\"width\":      1920, \n\"height\":     1080, \n\"interlace\":  false,\"frame rate\": 24\n}\n}";
-/* 	char text2[]="[\"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"]";
+/* 	char text1[]="{\n\"name\": \"Jack (\\\"Bee\\\") Nimble\", \n\"format\": {\"type\":       \"rect\", \n\"width\":      1920, \n\"height\":     1080, \n\"interlace\":  false,\"frame rate\": 24\n}\n}";
+	char text2[]="[\"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\"]";
 	char text3[]="[\n    [0, -1, 0],\n    [1, 0, 0],\n    [0, 0, 1]\n	]\n";
 	char text4[]="{\n		\"Image\": {\n			\"Width\":  800,\n			\"Height\": 600,\n			\"Title\":  \"View from 15th Floor\",\n			\"Thumbnail\": {\n				\"Url\":    \"http:/*www.example.com/image/481989943\",\n				\"Height\": 125,\n				\"Width\":  \"100\"\n			},\n			\"IDs\": [116, 943, 234, 38793]\n		}\n	}";
 	char text5[]="[\n	 {\n	 \"precision\": \"zip\",\n	 \"Latitude\":  37.7668,\n	 \"Longitude\": -122.3959,\n	 \"Address\":   \"\",\n	 \"City\":      \"SAN FRANCISCO\",\n	 \"State\":     \"CA\",\n	 \"Zip\":       \"94107\",\n	 \"Country\":   \"US\"\n	 },\n	 {\n	 \"precision\": \"zip\",\n	 \"Latitude\":  37.371991,\n	 \"Longitude\": -122.026020,\n	 \"Address\":   \"\",\n	 \"City\":      \"SUNNYVALE\",\n	 \"State\":     \"CA\",\n	 \"Zip\":       \"94085\",\n	 \"Country\":   \"US\"\n	 }\n	 ]";
@@ -39,7 +55,7 @@ int main(void)
         "    <p>Application Error</p>\n"
         "  </iframe>\n"
         "</body>\n"
-        "</html>\n"; */
+        "</html>\n";
 
 	char *out;
 	cJSON *json;
@@ -50,7 +66,7 @@ int main(void)
 	cJSON_AddNumberToObject(json,"item2",234);
 	cJSON_AddBoolToObject(json,"item3",1);
 	
-	
+
 	//json=cJSON_Parse(text1);
 	jsonTemp = json;
 	int i=0;
@@ -81,8 +97,29 @@ int main(void)
 		printf("%s\n",out);
 		free(out);
 	}
+	 */
+	
+	g_threadpool = creat_thread_pool(3,10);
+	g_threadpool->init(g_threadpool);
+	printf("111111111111");
+	g_threadpool->process_job(g_threadpool,thread_fun,(void*)1);
+	sleep(1);
+	printf("2222222222222");
+	g_threadpool->process_job(g_threadpool,thread_fun,(void*)2);
+	sleep(1);
+	g_threadpool->process_job(g_threadpool,thread_fun,(void*)3);
+	sleep(1);
+	g_threadpool->process_job(g_threadpool,thread_fun,(void*)4);
+
+	sleep(10);
 	
 
+	while(1)
+	{
+		sleep(2);
+	}
+	
+	g_threadpool->close(g_threadpool);
 }
 
 
