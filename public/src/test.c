@@ -3,6 +3,7 @@
 #include "cJSON.h"
 #include "thread_pool.h"
 #include "LibLoger.h"
+#include <pthread.h>
 
 
 
@@ -29,7 +30,16 @@ void *thread_fun(void *param)
 }
 
 
-
+pthread_mutex_t mutex ;
+void *print_msg(void *arg){
+        int i=0;
+        //pthread_mutex_lock(&mutex);
+        for(i=0;i<15;i++){
+                printf("output : %d\n",i);
+                usleep(100);
+        }
+        //pthread_mutex_unlock(&mutex);
+}
 
 int main(void)
 {
@@ -99,7 +109,7 @@ int main(void)
 	}
 	 */
 	
-	g_threadpool = creat_thread_pool(3,10);
+/* 	g_threadpool = creat_thread_pool(3,10);
 	g_threadpool->init(g_threadpool);
 	printf("111111111111");
 	g_threadpool->process_job(g_threadpool,thread_fun,(void*)1);
@@ -119,7 +129,23 @@ int main(void)
 		sleep(2);
 	}
 	
-	g_threadpool->close(g_threadpool);
+	g_threadpool->close(g_threadpool); */
+	
+
+
+        pthread_t id1;
+        pthread_t id2;
+        pthread_mutex_init(&mutex,NULL);
+        pthread_create(&id1,NULL,print_msg,NULL);
+        pthread_create(&id2,NULL,print_msg,NULL);
+        pthread_join(id1,NULL);
+        pthread_join(id2,NULL);
+        pthread_mutex_destroy(&mutex);
+        return 1;
+
+
+	
+	
 }
 
 
