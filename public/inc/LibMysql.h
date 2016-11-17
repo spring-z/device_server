@@ -2,6 +2,16 @@
 #define _LIBMYSQL_H_
 
 
+#include <pthread.h>
+
+
+#define HOST_IP			"115.28.146.59"
+#define USERNAME		"root"
+#define PASSWORD		"Hqu123456"
+#define DB_NAME			"test_db"
+
+
+
 typedef struct 
 {
 	MYSQL conn;
@@ -13,20 +23,20 @@ typedef struct
 
 typedef struct 
 {
-	dbConnNode* conn_node_info;
+	dbConnNode_t* conn_node_arry;
 	int conn_num;
-	pthread_mutex_t  conn_lock;
+	pthread_mutex_t  pool_lock;
 	
 } dbConnPool_t;
 
 
 
 dbConnPool_t* CreatMysqlConnPool(int conn_num);
-dbConnNode_t* GetMysqlConnNode(void);
-int CheckMysqlConnNodeActive(dbConnNode_t* conn_node);
+dbConnNode_t* GetMysqlConnNode(dbConnPool_t* conn_pool);
+void ReleaseMysqlConnNode(dbConnNode_t* conn_node);
+
 int ReConnectMysqlConnNode(dbConnNode_t* conn_node);
-int DeleteMysqlConnNode(dbConnPool_t* conn_pool);
-int DestoyedMysqlConnPool(dbConnPool_t* conn_pool);
+void DestoyedMysqlConnPool(dbConnPool_t* conn_pool);
 
 
 

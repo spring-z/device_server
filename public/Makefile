@@ -26,7 +26,7 @@ LDFLAGS=-L$(PROJDIR)/lib/obj
 LDFLAGS+=-L$(PROJDIR)/public/obj
 
 
-LINKFLAGS= -lpthread -lm
+LINKFLAGS= -lpthread -lm -l mysqlclient
 
 CFLAGS+=$(INCS)
 
