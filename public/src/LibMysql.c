@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <mysql/mysql.h>
 #include <netdb.h>
+#include <stdarg.h>
 #include "LibMysql.h"
 #include "LibLoger.h"
 
@@ -152,18 +152,32 @@ void DestoyedMysqlConnPool(dbConnPool_t* conn_pool)
 		pthread_mutex_unlock(&(conn_pool->conn_node_arry[i].conn_lock));
 	}
 	info("close done and cleanning malloc\n");
+	
+	pthread_mutex_unlock(&conn_pool->pool_lock);
 	free(conn_pool->conn_node_arry);
 	conn_pool->conn_node_arry = NULL;
 	free(conn_pool);
 	conn_pool = NULL;
-	
-	pthread_mutex_unlock(&conn_pool->pool_lock);
 }
 
 
 
-
-
+int MysqlExcuteQuery(dbConnNode_t* conn_node, char* query_str,...)
+{
+	char sql[1024];
+	va_list args;  
+    va_start(args,query_str);  
+    vsprintf(sql,query_str,args);  
+    va_end(args);  
+	info("excute sql: %s\n",sql);
+	if(mysql_real_query(&conn_node->conn,sql,strlen(sql)))
+	{
+		error("mysql query error!\n");
+		return -1;
+	}
+	
+	return 1;
+}
 
 
 

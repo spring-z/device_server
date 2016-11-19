@@ -3,12 +3,12 @@
 
 
 #include <pthread.h>
-
+#include <mysql/mysql.h>
 
 #define HOST_IP			"115.28.146.59"
 #define USERNAME		"root"
 #define PASSWORD		"Hqu123456"
-#define DB_NAME			"test_db"
+#define DB_NAME			"rssicap"
 
 
 
@@ -38,7 +38,7 @@ void ReleaseMysqlConnNode(dbConnNode_t* conn_node);
 int ReConnectMysqlConnNode(dbConnNode_t* conn_node);
 void DestoyedMysqlConnPool(dbConnPool_t* conn_pool);
 
-
+int MysqlExcuteQuery(dbConnNode_t* conn_node, char* query_str,...);
 
 #endif
 

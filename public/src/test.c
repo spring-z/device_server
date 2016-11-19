@@ -4,12 +4,12 @@
 #include "thread_pool.h"
 #include "LibLoger.h"
 #include <pthread.h>
-
-
+#include "LibMysql.h"
+#include "inirw.h"
 
 
 tp_thread_pool *g_threadpool;
-
+dbConnPool_t *g_mysqlpool;
 
 void *thread_fun(void *param)
 {
@@ -133,7 +133,7 @@ int main(void)
 	
 
 
-        pthread_t id1;
+/*         pthread_t id1;
         pthread_t id2;
         pthread_mutex_init(&mutex,NULL);
         pthread_create(&id1,NULL,print_msg,NULL);
@@ -141,11 +141,59 @@ int main(void)
         pthread_join(id1,NULL);
         pthread_join(id2,NULL);
         pthread_mutex_destroy(&mutex);
-        return 1;
+        return 1; */
 
-
+/*	dbConnNode_t* mysql_conn; 
+	g_mysqlpool = CreatMysqlConnPool(10);
+	mysql_conn = GetMysqlConnNode(g_mysqlpool);
+	MysqlExcuteQuery(mysql_conn,"INSERT INTO ts_wifi(system_time,ap_mac) VALUES(NOW(),1122233);");
+	ReleaseMysqlConnNode(mysql_conn);
+	DestoyedMysqlConnPool(g_mysqlpool);*/
 	
 	
+	
+	
+	const char *file = "config.ini";
+	
+	char *sect;
+	char *key;
+	char value[256];
+	int intval;
+
+	printf("load file %s\n\n", file);
+	iniFileLoad(file);
+
+	sect = 0;
+	key = "_str001";
+	iniGetString(sect, key, value, sizeof(value), "notfound!");
+	printf("[%s] %s = %s\n", sect, key, value);
+
+	sect = "sect1";
+	key = "str001";
+	iniGetString(sect, key, value, sizeof(value), "notfound!");
+	printf("[%s] %s = %s\n", sect, key, value);
+
+	sect = "sect1";
+	key = "str005";
+	iniGetString(sect, key, value, sizeof(value), "notfound!");
+	printf("[%s] %s = %s\n", sect, key, value);
+
+	sect = "sect2";
+	key = "str002";
+	iniGetString(sect, key, value, sizeof(value), "notfound!");
+	printf("[%s] %s = %s\n", sect, key, value);
+
+	sect = "sect2";
+	key = "int002";
+	intval = iniGetInt(sect, key, 1000);
+	printf("[%s] %s = %d\n", sect, key, intval);
+
+	iniSetString("sect2", "str002", "\"v'a;l;u#e'002\"");
+	iniSetString("sect2", "str003", "value003");
+
+	iniSetInt("sect2", "int001", 100, 0);
+	iniSetInt("sect2", "int002", 200, 16);
+	iniSetInt("sect2", "int003", 300, 8);
 }
 
 

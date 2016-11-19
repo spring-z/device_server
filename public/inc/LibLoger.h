@@ -5,8 +5,8 @@
 #include <syslog.h>
 
 #if 1	/*log to console*/
-#define error(format,...) printf(format,##__VA_ARGS__)
-#define info(format,...)  printf(format,##__VA_ARGS__)
+#define error(format,...) {printf("LOG_ERROR: ");printf(format,##__VA_ARGS__);}
+#define info(format,...)  {printf("LOG_INFO:  ");printf(format,##__VA_ARGS__);}
 #endif
 
 #if 0	/*log to syslog*/ 
