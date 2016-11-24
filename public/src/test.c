@@ -244,13 +244,24 @@ int main(void)
 	
 	printf("bbb\n");
 	
-	SetTimer(&timer1, 2, true, timer1_irq);
-	SetTimer(&timer2, 3, true, timer2_irq);
+	SetTimer(&timer1, 1, true, timer1_irq);
+	SetTimer(&timer2, 2, true, timer2_irq);
 	
 	
 	printf("aaa\n");
 	
-	while(1);
+	sleep(10);
+	
+	StopTimer(&timer1);
+	
+	printf("111\n");
+	sleep(10);
+	
+	DeleteTimer(&timer2);
+	SetTimer(&timer1, 1, true, timer1_irq);
+	
+	printf("222\n");
+	sleep(10);
 	
 	
 }
