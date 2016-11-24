@@ -92,7 +92,7 @@ int DecodeDTL654Frame(uint8_t* frameIn, uint8_t frameLen, DTL654Item_t* DTL654It
 
 
 
-
+/*
 int main()
 {
 	uint8_t frame[100];
@@ -148,7 +148,7 @@ int main()
 }
 
 
-
+*/
 
 
 
