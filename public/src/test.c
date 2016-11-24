@@ -7,6 +7,11 @@
 #include "LibMysql.h"
 #include "inirw.h"
 
+#include <time.h>  
+#include <sys/time.h>  
+#include <signal.h>  
+
+#include "LibTimerManager.h"
 
 tp_thread_pool *g_threadpool;
 dbConnPool_t *g_mysqlpool;
@@ -40,6 +45,32 @@ void *print_msg(void *arg){
         }
         //pthread_mutex_unlock(&mutex);
 }
+
+
+
+
+
+time_t t;  //定义一个时间变量'
+
+void timer1_irq(void)
+{
+	time(&t);
+	printf("%s: timer1 interrupt!\n",asctime(localtime(&t)));
+}
+
+void timer2_irq(void)
+{
+	time(&t);
+	printf("%s: timer2 interrupt!\n",asctime(localtime(&t)));
+}
+
+static struct itimerval oldtv;  
+	
+TimerEvent_t timer1;
+TimerEvent_t timer2;
+
+
+
 
 int main(void)
 {
@@ -150,10 +181,9 @@ int main(void)
 	ReleaseMysqlConnNode(mysql_conn);
 	DestoyedMysqlConnPool(g_mysqlpool);*/
 	
+
 	
-	
-	
-	const char *file = "config.ini";
+/*	const char *file = "config.ini";
 	
 	char *sect;
 	char *key;
@@ -194,6 +224,35 @@ int main(void)
 	iniSetInt("sect2", "int001", 100, 0);
 	iniSetInt("sect2", "int002", 200, 16);
 	iniSetInt("sect2", "int003", 300, 8);
+	*/
+	
+	
+	struct itimerval itv;  
+    itv.it_interval.tv_sec = 1;  
+    itv.it_interval.tv_usec = 0;  
+    itv.it_value.tv_sec = 1;  
+    itv.it_value.tv_usec = 0;  
+    setitimer(ITIMER_REAL, &itv, &oldtv);
+	
+	TimerManagerInit();
+	
+	signal(SIGALRM, TimerOnIRQ);  
+
+	AddTimer(&timer1);
+	AddTimer(&timer2);
+	
+	
+	printf("bbb\n");
+	
+	SetTimer(&timer1, 2, true, timer1_irq);
+	SetTimer(&timer2, 3, true, timer2_irq);
+	
+	
+	printf("aaa\n");
+	
+	while(1);
+	
+	
 }
 
 
