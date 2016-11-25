@@ -77,10 +77,7 @@ int AddTimer(TimerEvent_t* timer)
 	TimerEvent_t* current = timerListHead.header;
 	
 	HAL_DISABLE_INTERRUPTS();
-	
-	printf("111\n");
-	
-	
+
 	if((timer == NULL) || (TimerExist(timer)))
 	{
 		HAL_ENABLE_INTERRUPTS();
