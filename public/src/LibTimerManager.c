@@ -48,7 +48,7 @@ void TimerUpdate(unsigned short msec)
 	
 	while(current != NULL)
 	{
-		if(current->open = true)
+		if(current->open == true)
 		{
 			current->tick += msec;
 			if(current->tick >= current->reload)

@@ -30,7 +30,7 @@ typedef struct _tag_TimerEvent
 
 
 
-void TimerOnIRQ(int m);
+void TimerUpdate(unsigned short msec);
 
 void TimerManagerInit(void);
 
