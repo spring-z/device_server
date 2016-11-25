@@ -42,7 +42,7 @@ static int TimerExist( TimerEvent_t *timer);
 
 
 
-void TimerUpdate(int msec)
+void TimerUpdate(unsigned short msec)
 {
 	TimerEvent_t* current = timerListHead.header;
 	
