@@ -42,7 +42,7 @@ static int TimerExist( TimerEvent_t *timer);
 
 
 
-void TimerOnIRQ(int m)
+void TimerUpdate(int msec)
 {
 	TimerEvent_t* current = timerListHead.header;
 	
@@ -50,7 +50,7 @@ void TimerOnIRQ(int m)
 	{
 		if(current->open = true)
 		{
-			current->tick++;
+			current->tick += msec;
 			if(current->tick >= current->reload)
 			{
 				current->callback();
