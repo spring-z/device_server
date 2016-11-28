@@ -3,7 +3,8 @@
 
 
 
-int StartupSocket(const unsigned int port);
+int StartupTcpSocket(const unsigned int port);
+int StartupUdpSocket(const unsigned int port);
 
 
 #endif
