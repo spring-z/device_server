@@ -140,18 +140,23 @@ int main(void)
 	}
 	 */
 	
-/* 	g_threadpool = creat_thread_pool(3,10);
+ 	g_threadpool = creat_thread_pool(3,4);
 	g_threadpool->init(g_threadpool);
-	printf("111111111111");
+	printf("111111111111\n");
 	g_threadpool->process_job(g_threadpool,thread_fun,(void*)1);
 	sleep(1);
-	printf("2222222222222");
+	printf("2222222222222\n");
 	g_threadpool->process_job(g_threadpool,thread_fun,(void*)2);
 	sleep(1);
 	g_threadpool->process_job(g_threadpool,thread_fun,(void*)3);
 	sleep(1);
 	g_threadpool->process_job(g_threadpool,thread_fun,(void*)4);
+	sleep(1);
+	g_threadpool->process_job(g_threadpool,thread_fun,(void*)5);
+	sleep(1);
+	g_threadpool->process_job(g_threadpool,thread_fun,(void*)6);
 
+	printf("333333333333333\n");
 	sleep(10);
 	
 
@@ -160,7 +165,7 @@ int main(void)
 		sleep(2);
 	}
 	
-	g_threadpool->close(g_threadpool); */
+	g_threadpool->close(g_threadpool); 
 	
 
 
@@ -227,7 +232,7 @@ int main(void)
 	*/
 	
 	
-	struct itimerval itv;  
+/*	struct itimerval itv;  
     itv.it_interval.tv_sec = 1;  
     itv.it_interval.tv_usec = 0;  
     itv.it_value.tv_sec = 1;  
@@ -263,7 +268,7 @@ int main(void)
 	printf("222\n");
 	sleep(10);
 	
-	
+*/	
 }
 
 

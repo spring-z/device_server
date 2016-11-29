@@ -12,8 +12,8 @@ TARGET1=UniTest
 TARGET1_MAIN=test.c
 
 #目标文件2
-#TARGET2=UniTest2
-#TARGET2_MAIN=test2.c
+TARGET2=UniTest2
+TARGET2_MAIN=test2.c
 
 #获取src目录下所有.c文件
 SRCS=$(wildcard $(SRCDIR)/*.c)
@@ -50,8 +50,8 @@ all:$(TARGET1)
 $(TARGET1):$(OBJS) $(TARGET1_MAIN)
 	$(CC) -o $@ $(OBJS) $(CFLAGS) $(TARGET1_MAIN) $(LINKFLAGS)
 	
-#$(TARGET2):$(OBJS) $(TARGET2_MAIN)
-#	$(CC) -o $@ $(OBJS) $(CFLAGS) $(TARGET2_MAIN) $(LINKFLAGS)
+$(TARGET2):$(OBJS) $(TARGET2_MAIN)
+	$(CC) -o $@ $(OBJS) $(CFLAGS) $(TARGET2_MAIN) $(LINKFLAGS)
 
 $(OBJS):$(SRCS)
 	$(CC) $(CFLAGS) -c $(patsubst %.o,$(SRCDIR)/%.c,$(notdir $@)) -o $@

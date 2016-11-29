@@ -1,23 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "LibSocket.h"
+#include "LinkQueue.h"
+
+
+#define MAX_BUFF_SIZE	1024
+typedef struct
+{
+	int len; 
+	char* buff[MAX_BUFF_SIZE];
+} DataBuffItem_t;
 
 
 
-
-
-
-
+extern LinkQueue *g_tcpDataQueue;
+extern tp_thread_pool *g_threadPool;
+extern int g_MsgQueueID;
 FdSet_t g_fdManagerSet;
 
 
+ 
 
-
-
-
+//thread tcp listen
 void TcpServer_ListenWork(int listen_fd)
 {
 	EpollSet_t* epollSet;
+	char tcpRecvBuff[1024];
 	int fds;
 	int i;
 	
@@ -58,41 +66,91 @@ void TcpServer_ListenWork(int listen_fd)
 			    printf("accept sock:%d\n",sock_fd);	
 				EpollSetAddFd(epollSet,sock_fd);
 				
+				if(-1 == FdSet_AddNode(g_fdManagerSet, sock_fd))
+				{
+					free(fdNode);
+					error("FdSet_AddNode add fd error\n");
+				}
 				continue;
 			}
 			else
 			{	
-				int bytes;
-				bytes = recv(epollSet->events[i].data.fd, msg_buff.buff, MAX_BUFF_LEN, 0);
-				if(bytes <= 0)
+				DataBuffItem_t* dataBuff;
+				dataBuff = (DataBuffItem_t*)malloc(sizeof(DataBuffItem_t));
+				if(dataBuff != NULL)
 				{
-					EpollSetDeleteFd(epollSet, epollSet->events[i].data.fd);
-					close(epollSet->events[i].data.fd);
-					continue;
+					dataBuff->len = recv(epollSet->events[i].data.fd, dataBuff->buff, MAX_BUFF_SIZE, 0);
+					if(dataBuff->len <= 0)
+					{
+						EpollSetDeleteFd(epollSet, epollSet->events[i].data.fd);
+						FdSet_DeleteNode(g_fdManagerSet,epollSet->events[i].data.fd);
+						close(epollSet->events[i].data.fd);
+						continue;
+					}
+					else
+					{
+						FdSet_Update(g_fdManagerSet,epollSet->events[i].data.fd);
+						if(0 == LinkQueue_Append(g_tcpDataQueue, (uint8_t*)dataBuff))
+						{
+							error("dataBuff append error!\n");
+							free(dataBuff);
+						}
+					}
 				}
 				else
 				{
-					printf("%s\n",(char*)msg_buff.buff);
-					msg_buff.msg_type = 1;
-					printf("send %s, type = %ld, len = %ld\n", msg_buff.buff,msg_buff.msg_type,sizeof(struct msg_st));
-					MsgQueueSend(msgId,&msg_buff,sizeof(struct msg_st));
+					error("dataBuff malloc error!\n");
 				}
 			}
 			
 		}
 	}
 	
-	
-	
-	
-	
-	
-	
+	error("TcpServer_ListenWork exiting....!\n");
 	
 }
 
+//thread data handle
+void TcpServer_HandleWork(int m)
+{
+	while(1)
+	{
+		if(LinkQueue_Length(g_tcpDataQueue))
+		{
+			DataBuffItem_t* dataBuff;
+			dataBuff = (DataBuffItem_t*)LinkQueue_Retrieve(g_tcpDataQueue)
+			if(dataBuff != NULL)
+			{
+				DTL654Item_t* DTL654Item;
+				int pos;
+				do
+				{
+					pos = DecodeDTL654Frame(dataBuff->buff, dataBuff->len, DTL654Item);
+					if(pos < 0)
+					{
+						error("DecodeDTL654Frame error!\n");
+						free(dataBuff);
+						break;
+					}
+					ProtocolHandle(DTL654Item);
+					free(DTL654Item->DTL654FrameData);
+				}
+				while(pos > 0);
+				
+				free(dataBuff);
+			}
+			else
+			{
+				error("LinkQueue_Retrieve g_tcpDataQueue error!\n");
+			}
+		}
+		else
+		{
+			sleep(1);
+		}
+	}
 
-
+}
 
 
 

@@ -3,8 +3,9 @@
 #include "LibLoger.h"
 #include "inirw.h"
 #include "thread_pool.h"
+#include "LinkQueue.h"
 
-
+LinkQueue *g_tcpDataQueue;
 tp_thread_pool *g_threadPool;
 int g_MsgQueueID;
 
@@ -59,6 +60,13 @@ int main()
 	}
 	
 	info("server creat queue...\n");
+	g_tcpDataQueue = LinkQueue_Create();
+	if(NULL == g_tcpDataQueue)
+	{
+		error("creat data queue error!");	
+		return -1;
+	}
+	
 	info("server creat msgueue...\n");
 	g_MsgQueueID = CreatMessageQueue(MSGQUEUE_KEY);
 	if(-1 == g_MsgQueueID)
