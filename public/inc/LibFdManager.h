@@ -2,19 +2,23 @@
 #define _LIBFDMANAGER_H_
 
 
+#define FD_RECYCLE_TIME		21600	
+
+
 typedef struct _tag_FdSetNode_t FdSetNode_t;
 typedef struct _tag_FdSet_t FdSet_t;
 
 typedef struct {
 	int fd;
-	int alive;
-	unsigned long uid;
+	unsigned long alive_time;
+	unsigned long key;
 	FdSetNode_t* next;
 } _tag_FdSetNode_t;
 
 typedef struct {
 	FdSetNode_t* head;
-	int nodeNum;
+	FdSetNode_t* tail;
+	int node_num;
 } _tag_FdSet_t;
 
 

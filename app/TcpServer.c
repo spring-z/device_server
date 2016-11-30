@@ -7,6 +7,7 @@
 
 LinkQueue *g_tcpDataQueue;
 tp_thread_pool *g_threadPool;
+dbConnPool_t *g_mysqlConnPool;
 int g_MsgQueueID;
 
 
@@ -17,6 +18,7 @@ int main()
 	int listenFd;
 	int minThreadNum;
 	int maxThreadNum;
+	int mysqlConnNum;
 	
 	info("server setup\n");
 	info("server read config file...\n");
@@ -35,7 +37,8 @@ int main()
 	
 	maxThreadNum = iniGetInt("tcp_sever","max_thread",0)
 	minThreadNum = iniGetInt("tcp_sever","min_thread",0)
-	if((maxThreadNum == 0)||(minThreadNum == 0))
+	mysqlConnNum = iniGetInt("tcp_sever","max_mysql_conn",0)
+	if((maxThreadNum == 0)||(minThreadNum == 0)||(mysqlConnNum == 0))
 	{
 		error("invaid thread num!");	
 		return -1;
@@ -74,6 +77,15 @@ int main()
 		error("creat msg queue error!");	
 		return -1;
 	}
+	
+	info("server creat mysql connect pool...\n");
+	g_mysqlConnPool = CreatMysqlConnPool(mysqlConnNum);
+	if(NULL == g_mysqlConnPool)
+	{
+		error("creat mysql connect pool error!");	
+		return -1;
+	}	
+	
 	
 	g_threadPool->init(g_threadPool);
 	g_threadPool->process_job(g_threadPool,TcpServer_ListenWork,(void*)listenFd);

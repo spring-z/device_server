@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "LibSocket.h"
 #include "LinkQueue.h"
-
+#include "DTL645.h"
 
 #define MAX_BUFF_SIZE	1024
 typedef struct
@@ -132,8 +132,9 @@ void TcpServer_HandleWork(int m)
 						free(dataBuff);
 						break;
 					}
-					ProtocolHandle(DTL654Item);
-					free(DTL654Item->DTL654FrameData);
+					g_threadPool->process_job(g_threadPool,ProtocolHandle,(void*)DTL654Item);
+					//ProtocolHandle(DTL654Item);
+					//free(DTL654Item->DTL654FrameData);
 				}
 				while(pos > 0);
 				
