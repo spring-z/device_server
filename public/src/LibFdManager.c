@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>  
 #include "LibFdManager.h"
 
 
@@ -21,6 +24,7 @@ FdSet_t* FdSet_Creat(void)
 
 void FdSet_Clear(FdSet_t* set)
 {
+	time_t t;
 	FdSetNode_t* node = set->head;
 	if(node == NULL)
 		return;
@@ -64,14 +68,14 @@ void FdSet_Update(FdSet_t* set,int fd)
 }
 
 
-int FdSet_AddNode(FdSet_t* set,int fd, unsigned long key)
+int FdSet_AddNode(FdSet_t* set,int fd, unsigned long uid)
 {
 	time_t t;
 	FdSetNode_t* node = SearchFdNode(set, fd);
 	if(node != NULL)
 	{
 		node->alive_time = time(&t);
-		node->key = key;
+		node->uid = uid;
 	}
 	else
 	{
@@ -80,9 +84,9 @@ int FdSet_AddNode(FdSet_t* set,int fd, unsigned long key)
 		{
 			node->fd = fd;
 			node->alive_time = time(&t);
-			node->key = key;
+			node->uid = uid;
 			node->next = NULL;
-			if(search == NULL)
+			if(set->head == NULL)
 			{
 				set->head = node;
 				set->node_num--;
@@ -104,7 +108,7 @@ int FdSet_AddNode(FdSet_t* set,int fd, unsigned long key)
 }
 
 
-int FdSet_DeleteNode(FdSet_t* set,int fd)
+void FdSet_DeleteNode(FdSet_t* set,int fd)
 {
 	FdSetNode_t* node = set->head;
 	if(node == NULL)
@@ -139,7 +143,7 @@ int FdSet_DeleteNode(FdSet_t* set,int fd)
 }
 
 
-int FdSet_Destroy(FdSet_t* set,int fd)
+void FdSet_Destroy(FdSet_t* set,int fd)
 {
 	FdSetNode_t* free_node = set->head;
 	FdSetNode_t* node = free_node->next;
