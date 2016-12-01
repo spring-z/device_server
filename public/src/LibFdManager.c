@@ -141,7 +141,34 @@ int FdSet_DeleteNode(FdSet_t* set,int fd)
 
 int FdSet_Destroy(FdSet_t* set,int fd)
 {
+	FdSetNode_t* free_node = set->head;
+	FdSetNode_t* node = free_node->next;
 	
+	if(node == NULL)
+	{
+		free(set);
+		set = NULL;
+		return;
+	}
+
+	if(free_node == NULL)
+	{
+		free(set->head);
+		free(set);
+		set = NULL;
+		return;
+	}
+	
+	while(node != NULL)
+	{
+		free(free_node);
+		free_node = node;
+		node = node->next;
+	}
+	
+	free(free_node);
+	free(set);
+	set=NULL;
 }
 
 
