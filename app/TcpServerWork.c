@@ -1,8 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "LibSocket.h"
+#include "LibEpoll.h"
+#include "LibFdManager.h"
+#include "LibLoger.h"
 #include "LinkQueue.h"
+#include "thread_pool.h"
 #include "DTL645.h"
+#include "ProtocolHandle.h"
+
 
 #define MAX_BUFF_SIZE	1024
 typedef struct
@@ -16,7 +22,7 @@ typedef struct
 extern LinkQueue *g_tcpDataQueue;
 extern tp_thread_pool *g_threadPool;
 extern int g_MsgQueueID;
-FdSet_t g_fdManagerSet;
+FdSet_t* g_fdManagerSet;
 
 
  
@@ -25,38 +31,38 @@ FdSet_t g_fdManagerSet;
 void TcpServer_ListenWork(int listen_fd)
 {
 	EpollSet_t* epollSet;
-	char tcpRecvBuff[1024];
 	int fds;
 	int i;
 	
 	if((epollSet = CreatEpollSet(500)) == NULL)
 	{
 		error("creat EPOLL SET error!");	
-		return -1;
+		return;// -1;
 	}
 
 	g_fdManagerSet = FdSet_Creat();
 	if(g_fdManagerSet == NULL)
 	{
 		error("creat fd manager set error!");	
-		return -1;
+		return;// -1;
 	}
 	
 	if(EpollSetAddFd(epollSet,listen_fd) == -1)
-		return -1;
+		return;// -1;
 	
 	while(1)
 	{
 		fds = EpollSetWait(epollSet);
 		if(fds < 0)
 		{
-			perror("wait error:");
-			return -1;
+			perror("wait error:");//-----------------
+			//return -1;
 		}
 		for(i=0; i<fds; i++)
 		{
 			if(epollSet->events[i].data.fd == listen_fd)
 			{
+				int sock_fd;
 				sock_fd = accept(listen_fd, (struct sockaddr*)NULL, NULL);
 				if(sock_fd < 0)
 				{
@@ -66,9 +72,8 @@ void TcpServer_ListenWork(int listen_fd)
 			    printf("accept sock:%d\n",sock_fd);	
 				EpollSetAddFd(epollSet,sock_fd);
 				
-				if(-1 == FdSet_AddNode(g_fdManagerSet, sock_fd))
+				if(-1 == FdSet_AddNode(g_fdManagerSet, sock_fd,1))
 				{
-					free(fdNode);
 					error("FdSet_AddNode add fd error\n");
 				}
 				continue;
@@ -118,23 +123,23 @@ void TcpServer_HandleWork(int m)
 		if(LinkQueue_Length(g_tcpDataQueue))
 		{
 			DataBuffItem_t* dataBuff;
-			dataBuff = (DataBuffItem_t*)LinkQueue_Retrieve(g_tcpDataQueue)
+			dataBuff = (DataBuffItem_t*)LinkQueue_Retrieve(g_tcpDataQueue);
 			if(dataBuff != NULL)
 			{
-				DTL654Item_t* DTL654Item;
+				DTL645Item_t* DTL645Item;
 				int pos;
 				do
 				{
-					pos = DecodeDTL654Frame(dataBuff->buff, dataBuff->len, DTL654Item);
+					pos = DecodeDTL645Frame(dataBuff->buff, dataBuff->len, DTL645Item);
 					if(pos < 0)
 					{
-						error("DecodeDTL654Frame error!\n");
+						error("DecodeDTL645Frame error!\n");
 						free(dataBuff);
 						break;
 					}
-					g_threadPool->process_job(g_threadPool,ProtocolHandle,(void*)DTL654Item);
-					//ProtocolHandle(DTL654Item);
-					//free(DTL654Item->DTL654FrameData);
+					g_threadPool->process_job(g_threadPool,ProtocolHandle,(void*)DTL645Item);
+					//ProtocolHandle(DTL645Item);
+					//free(DTL645Item->DTL645FrameData);
 				}
 				while(pos > 0);
 				

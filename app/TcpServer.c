@@ -4,6 +4,9 @@
 #include "inirw.h"
 #include "thread_pool.h"
 #include "LinkQueue.h"
+#include "LibMsgQueue.h"
+#include "LibMysql.h"
+#include "TcpServerWork.h"
 
 LinkQueue *g_tcpDataQueue;
 tp_thread_pool *g_threadPool;
@@ -28,16 +31,16 @@ int main()
 		return -1;
 	}
 	
-	listenPort = iniGetInt("tcp_sever","listen_port",0)
+	listenPort = iniGetInt("tcp_sever","listen_port",0);
 	if(listenPort == 0)
 	{
 		error("invaid listen port!");	
 		return -1;
 	}
 	
-	maxThreadNum = iniGetInt("tcp_sever","max_thread",0)
-	minThreadNum = iniGetInt("tcp_sever","min_thread",0)
-	mysqlConnNum = iniGetInt("tcp_sever","max_mysql_conn",0)
+	maxThreadNum = iniGetInt("tcp_sever","max_thread",0);
+	minThreadNum = iniGetInt("tcp_sever","min_thread",0);
+	mysqlConnNum = iniGetInt("tcp_sever","max_mysql_conn",0);
 	if((maxThreadNum == 0)||(minThreadNum == 0)||(mysqlConnNum == 0))
 	{
 		error("invaid thread num!");	

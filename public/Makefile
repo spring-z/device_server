@@ -43,7 +43,7 @@ LINKFLAGS= -lpthread -lm -l mysqlclient
 
 CFLAGS+=$(INCS)
 
-.PHONY: all clean
+.PHONY: all clean echo
 
 all:$(TARGET1) 
 
@@ -56,6 +56,9 @@ $(TARGET2):$(OBJS) $(TARGET2_MAIN)
 $(OBJS):$(SRCS)
 	$(CC) $(CFLAGS) -c $(patsubst %.o,$(SRCDIR)/%.c,$(notdir $@)) -o $@
 
+	
+echo:
+	echo $(OBJS)
 	
 clean:
 	rm -f $(ROOT)/$(TARGET1) $(OBJDIR)/*.o

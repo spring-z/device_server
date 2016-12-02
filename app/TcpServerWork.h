@@ -6,7 +6,8 @@
 
 
 
-void TcpListenWork(void)
+void TcpServer_ListenWork(int listen_fd);
+void TcpServer_HandleWork(int m);
 
 
 

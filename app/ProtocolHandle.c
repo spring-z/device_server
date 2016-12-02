@@ -1,40 +1,42 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include "ProtocolHandle.h"
 #include "types.h"
-#include "DTL645.h"
 #include "LibMysql.h"
 
 
+extern dbConnPool_t* g_mysqlConnPool;
 
 
 static void HexToString(char *src, int len, char *dest);
 
 
-void ProtocolHandle(DTL654Item_t* DTL654Item)
+void ProtocolHandle(DTL645Item_t* DTL645Item)
 {
-	char DTL654DataSting[1024];
+	char DTL645DataSting[1024];
 	uint32_t uid;
 	dbConnNode_t* mysqlConn;
 	
-	HexToString(DTL654Item->DTL654FrameData, DTL654Item->DTL654FrameDataLen, DTL654DataSting);
-	uid = DTL654Item->DTL654FrameAddr[2];
+	HexToString((char*)DTL645Item->DTL645FrameData, DTL645Item->DTL645FrameDataLen, DTL645DataSting);
+	uid = DTL645Item->DTL645FrameAddr[2];
 	uid <<= 8;
-	uid = DTL654Item->DTL654FrameAddr[3];
+	uid = DTL645Item->DTL645FrameAddr[3];
 	uid <<= 8;
-	uid = DTL654Item->DTL654FrameAddr[4];
+	uid = DTL645Item->DTL645FrameAddr[4];
 	uid <<= 8;
-	uid = DTL654Item->DTL654FrameAddr[5];
+	uid = DTL645Item->DTL645FrameAddr[5];
 
 	mysqlConn = GetMysqlConnNode(g_mysqlConnPool);
 	MysqlExcuteQuery(mysqlConn, \
-		"insert into ts_data(uid,group_id,type,server_time,data) \
+		"insert into device_data_record(device_uid,device_group,device_type,server_time,device_data) \
 			values('%ld',%d,%d,now(),%s);",\
 			uid,
-			DTL654Item->DTL654FrameAddr[0],
-			DTL654Item->DTL654ControlCode,
-			DTL654DataSting);
+			DTL645Item->DTL645FrameAddr[0],
+			DTL645Item->DTL645ControlCode,
+			DTL645DataSting);
+	ReleaseMysqlConnNode(mysqlConn);
 	
-	
-	free(DTL654Item->DTL654FrameData);
+	free(DTL645Item->DTL645FrameData);
 	
 	
 }

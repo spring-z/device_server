@@ -1,6 +1,8 @@
 #ifndef __TYPES_H_
 #define __TYPES_H_
 
+#include <stdint.h>
+/*
 typedef char int8_t;
 typedef unsigned char uint8_t;
 typedef short int16_t;
@@ -9,17 +11,30 @@ typedef int uint32_t;
 typedef unsigned int uint32_t;
 typedef long long int64_t;
 typedef unsigned long long uint64_t;
+*/
 typedef char * string_t;
 typedef unsigned char ubool_t;
 typedef void (*pFunction)(void);
 
+#ifndef NULL
 #define NULL (0)
+#endif
 
+#ifndef TRUE
 #define TRUE	1
-#define FALSE 	0
+#endif
 
+#ifndef FALSE
+#define FALSE 	0
+#endif
+
+#ifndef SUCCESS
 #define SUCCESS 0
+#endif
+
+#ifndef FAILURE
 #define FAILURE 1
+#endif
 
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))

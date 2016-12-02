@@ -2,13 +2,10 @@
 #define _PROTOCOLHANDLE_H_
 
 
+#include "DTL645.h"
 
 
-
-void ProtocolHandle(DTL654Item_t* DTL654Item);
-
-
-
+void ProtocolHandle(DTL645Item_t* DTL654Item);
 
 
 
