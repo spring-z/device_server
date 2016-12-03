@@ -7,6 +7,9 @@
 #define DTL645END		0x16
 
 
+#define DTL645_MAX_DATALEN	1024 
+
+
 
 #define	DTL645START1_NOFIND			(-1)
 #define	DTL645START2_NOFIND			(-2)
@@ -20,8 +23,8 @@ typedef struct
 {
 	uint8_t DTL645FrameAddr[6]; 
 	uint8_t DTL645ControlCode;
-	uint8_t DTL645FrameDataLen;
-	uint8_t* DTL645FrameData;
+	int DTL645FrameDataLen;
+	uint8_t DTL645FrameData[DTL645_MAX_DATALEN];
 } DTL645Item_t;
 
 

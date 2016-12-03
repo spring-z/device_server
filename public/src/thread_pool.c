@@ -3,7 +3,7 @@
 
 
 static void *tp_work_thread(void *pthread);
-static void *tp_manage_thread(void *pthread);
+static void tp_manage_thread(void *pthread);
 
 static TPBOOL tp_init(tp_thread_pool *this);
 static void tp_close(tp_thread_pool *this);
@@ -176,7 +176,7 @@ void tp_process_job(tp_thread_pool *this, tp_work worker, tp_work_desc job) {
 				//if all current thread are busy, new thread is created here
 	//info("if all current thread are busy, new thread is created here");
 	pthread_mutex_lock(&this->tp_lock);
-	if (res = this->add_thread(this)) {
+	if ((res = this->add_thread(this))) {
 		i = this->cur_th_num - 1;
 		//tmpid = this->thread_info[i].thread_id;
 		this->thread_info[i].th_work = worker;
@@ -395,7 +395,7 @@ static void *tp_work_thread(void *pthread) {
  * 	pthread: thread pool struct ponter
  * return:
  */
-static void *tp_manage_thread(void *pthread) {
+static void tp_manage_thread(void *pthread) {
 	tp_thread_pool *this = (tp_thread_pool*) pthread;//main thread pool struct instance
 
 	signal(SIGQUIT, handle_quit);
@@ -410,5 +410,6 @@ static void *tp_manage_thread(void *pthread) {
 		}
 		sleep(MANAGE_INTERVAL);
 	} while (TRUE);
+	
 }
 

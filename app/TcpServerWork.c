@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/socket.h>
 #include "LibSocket.h"
 #include "LibEpoll.h"
 #include "LibFdManager.h"
@@ -14,8 +15,8 @@
 typedef struct
 {
 	int len; 
-	char* buff[MAX_BUFF_SIZE];
-} DataBuffItem_t;
+	uint8_t* buff[MAX_BUFF_SIZE];
+} DataBuff_t;
 
 
 
@@ -34,12 +35,14 @@ void TcpServer_ListenWork(int listen_fd)
 	int fds;
 	int i;
 	
+	info("listen_work thread creat Epoll set\n");
 	if((epollSet = CreatEpollSet(500)) == NULL)
 	{
 		error("creat EPOLL SET error!");	
 		return;// -1;
 	}
 
+	info("listen_work thread creat fd set\n");
 	g_fdManagerSet = FdSet_Creat();
 	if(g_fdManagerSet == NULL)
 	{
@@ -55,7 +58,7 @@ void TcpServer_ListenWork(int listen_fd)
 		fds = EpollSetWait(epollSet);
 		if(fds < 0)
 		{
-			perror("wait error:");//-----------------
+			error("wait error:");//-----------------
 			//return -1;
 		}
 		for(i=0; i<fds; i++)
@@ -69,7 +72,7 @@ void TcpServer_ListenWork(int listen_fd)
 					perror("accept error:");
 					continue;
 				}
-			    printf("accept sock:%d\n",sock_fd);	
+			    info("accept sock:%d\n",sock_fd);	
 				EpollSetAddFd(epollSet,sock_fd);
 				
 				if(-1 == FdSet_AddNode(g_fdManagerSet, sock_fd,1))
@@ -80,8 +83,8 @@ void TcpServer_ListenWork(int listen_fd)
 			}
 			else
 			{	
-				DataBuffItem_t* dataBuff;
-				dataBuff = (DataBuffItem_t*)malloc(sizeof(DataBuffItem_t));
+				DataBuff_t* dataBuff;
+				dataBuff = (DataBuff_t*)malloc(sizeof(DataBuff_t));
 				if(dataBuff != NULL)
 				{
 					dataBuff->len = recv(epollSet->events[i].data.fd, dataBuff->buff, MAX_BUFF_SIZE, 0);
@@ -115,34 +118,47 @@ void TcpServer_ListenWork(int listen_fd)
 	
 }
 
-//thread data handle
+//
+/* thread data handle
+ * 解析在TCP层之上封装的协议，获取数据内容
+ * 		格式：DTL645
+ */
 void TcpServer_HandleWork(int m)
 {
 	while(1)
 	{
 		if(LinkQueue_Length(g_tcpDataQueue))
 		{
-			DataBuffItem_t* dataBuff;
-			dataBuff = (DataBuffItem_t*)LinkQueue_Retrieve(g_tcpDataQueue);
+			DataBuff_t* dataBuff;
+			dataBuff = (DataBuff_t*)LinkQueue_Retrieve(g_tcpDataQueue);
 			if(dataBuff != NULL)
 			{
-				DTL645Item_t* DTL645Item;
 				int pos;
+				info("recv: ");
+				//info_hex_set(dataBuff->buff,dataBuff->len);
+						int i;
+		for(i=0;i<(dataBuff->len);i++)
+			info("%x ",dataBuff->buff[i]);
 				do
 				{
-					pos = DecodeDTL645Frame(dataBuff->buff, dataBuff->len, DTL645Item);
-					if(pos < 0)
+					DTL645Item_t* DTL645Item = (DTL645Item_t*)malloc(sizeof(DTL645Item_t));
+					if(DTL645Item != NULL)
 					{
-						error("DecodeDTL645Frame error!\n");
-						free(dataBuff);
-						break;
+						pos = DecodeDTL645Frame(dataBuff->buff, dataBuff->len, DTL645Item);
+						if(pos < 0)
+						{
+							error("DecodeDTL645Frame error!\n");
+							debug("free DTL645Item!\n");
+							free(DTL645Item);
+							break;
+						}
+						/*解析在DTL645协议之上封装的协议：应用层协议*/
+						debug("going to process protocol!\n");
+						g_threadPool->process_job(g_threadPool,ProtocolHandle,(void*)DTL645Item);
 					}
-					g_threadPool->process_job(g_threadPool,ProtocolHandle,(void*)DTL645Item);
-					//ProtocolHandle(DTL645Item);
-					//free(DTL645Item->DTL645FrameData);
 				}
 				while(pos > 0);
-				
+				debug("free dataBuff!\n");
 				free(dataBuff);
 			}
 			else

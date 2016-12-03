@@ -53,7 +53,7 @@ dbConnPool_t* CreatMysqlConnPool(int conn_num)
 	
 	for(i=0;i<conn_pool->conn_num;i++)
 	{
-		info("init mysql connect pool the %d node",i);
+		info("init mysql connect pool the %d node\n",i);
 		pthread_mutex_init(&conn_pool->conn_node_arry[i].conn_lock, NULL);
 		if(InitMysqlPoolNode(&conn_pool->conn_node_arry[i],HOST_IP,USERNAME,PASSWORD,DB_NAME) == -1)
 		{

@@ -98,7 +98,6 @@ int main()
 	uint8_t frame[100];
 	int frameLen;
 	DTL645Item_t DTL645Item;
-	uint8_t dataBuf[3] = {1,2,3};
 	int i;
 	int itemLen;
 	
@@ -110,7 +109,9 @@ int main()
 	DTL645Item.DTL645FrameAddr[5] = 0x11;
 	DTL645Item.DTL645ControlCode = 0xff;
 	DTL645Item.DTL645FrameDataLen = 3;
-	DTL645Item.DTL645FrameData = dataBuf;
+	DTL645Item.DTL645FrameData[0] = 1;
+	DTL645Item.DTL645FrameData[1] = 2;
+	DTL645Item.DTL645FrameData[2] = 3;
 	
 	frameLen = EncodeDTL645Frame(frame, 100, &DTL645Item);
 	
@@ -127,7 +128,6 @@ int main()
 	DTL645Item.DTL645FrameAddr[5] = 0;
 	DTL645Item.DTL645ControlCode = 0;
 	DTL645Item.DTL645FrameDataLen = 0;
-	DTL645Item.DTL645FrameData = dataBuf;
 	DTL645Item.DTL645FrameData[0] = 0;
 	DTL645Item.DTL645FrameData[1] = 0;
 	DTL645Item.DTL645FrameData[2] = 0;
@@ -146,9 +146,9 @@ int main()
 
 	printf("\n");
 }
-
-
 */
+
+
 
 
 

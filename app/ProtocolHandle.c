@@ -3,6 +3,7 @@
 #include "ProtocolHandle.h"
 #include "types.h"
 #include "LibMysql.h"
+#include "LibLoger.h"
 
 
 extern dbConnPool_t* g_mysqlConnPool;
@@ -10,7 +11,12 @@ extern dbConnPool_t* g_mysqlConnPool;
 
 static void HexToString(char *src, int len, char *dest);
 
-
+/* 
+ * @解析DTL645协议之上封装的应用层数据协议
+ * @param DTL645数据内容
+ * @return: void
+ *
+ */
 void ProtocolHandle(DTL645Item_t* DTL645Item)
 {
 	char DTL645DataSting[1024];
@@ -36,8 +42,8 @@ void ProtocolHandle(DTL645Item_t* DTL645Item)
 			DTL645DataSting);
 	ReleaseMysqlConnNode(mysqlConn);
 	
-	free(DTL645Item->DTL645FrameData);
-	
+	free(DTL645Item);
+	info("user data decode done!\n");
 	
 }
 
