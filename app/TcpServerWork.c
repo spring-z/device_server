@@ -15,7 +15,7 @@
 typedef struct
 {
 	int len; 
-	uint8_t* buff[MAX_BUFF_SIZE];
+	uint8_t buff[MAX_BUFF_SIZE];
 } DataBuff_t;
 
 
@@ -58,7 +58,7 @@ void TcpServer_ListenWork(int listen_fd)
 		fds = EpollSetWait(epollSet);
 		if(fds < 0)
 		{
-			error("wait error:");//-----------------
+			error("wait error, return num = %d!",fds);//-----------------
 			//return -1;
 		}
 		for(i=0; i<fds; i++)
@@ -91,8 +91,18 @@ void TcpServer_ListenWork(int listen_fd)
 					if(dataBuff->len <= 0)
 					{
 						EpollSetDeleteFd(epollSet, epollSet->events[i].data.fd);
+						info("remove fd %d from g_fdManagerSet!\n",epollSet->events[i].data.fd);
 						FdSet_DeleteNode(g_fdManagerSet,epollSet->events[i].data.fd);
-						close(epollSet->events[i].data.fd);
+						if(dataBuff->len == 0)
+						{
+							info("fd %d close connect!\n",epollSet->events[i].data.fd);
+							close(epollSet->events[i].data.fd);
+						}
+						else
+						{
+							error("fd %d appear error!\n",epollSet->events[i].data.fd);
+						}
+			
 						continue;
 					}
 					else
@@ -133,18 +143,16 @@ void TcpServer_HandleWork(int m)
 			dataBuff = (DataBuff_t*)LinkQueue_Retrieve(g_tcpDataQueue);
 			if(dataBuff != NULL)
 			{
-				int pos;
+				int pos = 0;
 				info("recv: ");
-				//info_hex_set(dataBuff->buff,dataBuff->len);
-						int i;
-		for(i=0;i<(dataBuff->len);i++)
-			info("%x ",dataBuff->buff[i]);
+				info_hex_set(dataBuff->buff,dataBuff->len);
+				info("\n");
 				do
 				{
 					DTL645Item_t* DTL645Item = (DTL645Item_t*)malloc(sizeof(DTL645Item_t));
 					if(DTL645Item != NULL)
 					{
-						pos = DecodeDTL645Frame(dataBuff->buff, dataBuff->len, DTL645Item);
+						pos = DecodeDTL645Frame(dataBuff->buff + pos, dataBuff->len, DTL645Item);
 						if(pos < 0)
 						{
 							error("DecodeDTL645Frame error!\n");
@@ -152,12 +160,14 @@ void TcpServer_HandleWork(int m)
 							free(DTL645Item);
 							break;
 						}
+						
 						/*解析在DTL645协议之上封装的协议：应用层协议*/
 						debug("going to process protocol!\n");
-						g_threadPool->process_job(g_threadPool,ProtocolHandle,(void*)DTL645Item);
+						//g_threadPool->process_job(g_threadPool,ProtocolHandle,(void*)DTL645Item);		//第二次接收数据卡死在这里
+						ProtocolHandle(DTL645Item);
 					}
 				}
-				while(pos > 0);
+				while((dataBuff->len - pos) > 0);
 				debug("free dataBuff!\n");
 				free(dataBuff);
 			}

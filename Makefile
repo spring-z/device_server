@@ -4,6 +4,8 @@ CC=gcc
 ROOT=.
 PROJDIR=$(ROOT)/..
 
+DEBUG=1
+
 #通用组件
 PUB_OBJDIR=$(ROOT)/public/obj
 PUB_SRCDIR=$(ROOT)/public/src
@@ -41,7 +43,7 @@ INCS+=-I$(APP_INCDIR)
 
 #编译选项
 ifeq ($(DEBUG),1)
-	CFLAGS=-Wall -DDBUG
+	CFLAGS=-g -Wall -DDBUG
 else
 	CFLAGS=-Wall -DRELEASE
 endif
@@ -76,6 +78,7 @@ $(APP_OBJS):$(APP_SRCS)
 	
 echo:
 	echo $(CC) -o $@ $(OBJS) $(CFLAGS) $(TARGET1_MAIN) $(LINKFLAGS)
+	echo $(DEBUG)
 	
 clean:
 	rm -f $(ROOT)/$(TARGET1) $(PUB_OBJDIR)/*.o $(APP_OBJDIR)/*.o

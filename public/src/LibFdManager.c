@@ -89,13 +89,14 @@ int FdSet_AddNode(FdSet_t* set,int fd, unsigned long uid)
 			if(set->head == NULL)
 			{
 				set->head = node;
-				set->node_num--;
+				set->tail = node;
+				set->node_num++;
 			}
 			else
 			{
 				set->tail->next = node;
 				set->tail = node;
-				set->node_num--;
+				set->node_num++;
 			}
 		}
 		else
