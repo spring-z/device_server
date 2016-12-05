@@ -163,8 +163,8 @@ void TcpServer_HandleWork(int m)
 						
 						/*解析在DTL645协议之上封装的协议：应用层协议*/
 						debug("going to process protocol!\n");
-						//g_threadPool->process_job(g_threadPool,ProtocolHandle,(void*)DTL645Item);		//第二次接收数据卡死在这里
-						ProtocolHandle(DTL645Item);
+						g_threadPool->process_job(g_threadPool,ProtocolHandle,(void*)DTL645Item);		//第二次接收数据卡死在这里
+						//ProtocolHandle(DTL645Item);
 					}
 				}
 				while((dataBuff->len - pos) > 0);

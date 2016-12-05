@@ -361,16 +361,19 @@ void handle_quit(int signo) {
 static void *tp_work_thread(void *pthread) {
 	tp_thread_info *th = (tp_thread_info*) pthread;	//main thread pool struct instance
 
+	th->exit = FALSE;
+	
 	signal(SIGQUIT, handle_quit);
 	//wait cond for processing real job.
 	while ( TRUE) {
 		pthread_mutex_lock(&th->thread_lock);
 		th->is_wait = TRUE;
+		info("%d thread wait!\n", pthread_self());
 		pthread_cond_wait(&th->thread_cond, &th->thread_lock);
 		th->is_wait = FALSE;
 		pthread_mutex_unlock(&th->thread_lock);
 
-		//info("%d thread do work!\n", pthread_self());
+		info("%d thread do work!\n", pthread_self());
 
 		if (NULL != th->th_work) {
 			th->th_work(th->th_job);
@@ -383,6 +386,7 @@ static void *tp_work_thread(void *pthread) {
 		pthread_mutex_unlock(&th->thread_lock);
 
 		if (th->exit) {
+			info("%d thread exit!\n", pthread_self());
 			return NULL;
 		}
 		//info("%d thread do work over!,nseq = %d\n", pthread_self(),nseq);
