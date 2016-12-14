@@ -368,12 +368,12 @@ static void *tp_work_thread(void *pthread) {
 	while ( TRUE) {
 		pthread_mutex_lock(&th->thread_lock);
 		th->is_wait = TRUE;
-		info("%d thread wait!\n", pthread_self());
+		info("%d thread wait!\n", (int)pthread_self());
 		pthread_cond_wait(&th->thread_cond, &th->thread_lock);
 		th->is_wait = FALSE;
 		pthread_mutex_unlock(&th->thread_lock);
 
-		info("%d thread do work!\n", pthread_self());
+		info("%d thread do work!\n", (int)pthread_self());
 
 		if (NULL != th->th_work) {
 			th->th_work(th->th_job);
@@ -386,7 +386,7 @@ static void *tp_work_thread(void *pthread) {
 		pthread_mutex_unlock(&th->thread_lock);
 
 		if (th->exit) {
-			info("%d thread exit!\n", pthread_self());
+			info("%d thread exit!\n", (int)pthread_self());
 			return NULL;
 		}
 		//info("%d thread do work over!,nseq = %d\n", pthread_self(),nseq);

@@ -16,9 +16,7 @@ typedef  unsigned char bool;
 typedef struct _tag_TimerEvent
 {
 	bool open;
-	bool interval;
-	unsigned long tick;
-	unsigned long reload;
+	unsigned long timeout;	// < 2^31
 	void (*callback)(void);
 	struct _tag_TimerEvent *next;
 } TimerEvent_t;
@@ -29,6 +27,12 @@ typedef struct _tag_TimerEvent
 #define HAL_ENABLE_INTERRUPTS()	
 
 
+#define time_after(unknown,known) ((long)(known) - (long)(unknown)<0)
+#define time_before(unkonwn,known) ((long)(unknown) - (long)(known)<0)
+#define time_after_eq(unknown,known) ((long)(unknown) - (long)(known)>=0)
+#define time_before_eq(unknown,known) ((long)(known) -(long)(unknown)>=0)
+
+
 
 void TimerUpdate(unsigned short msec);
 
@@ -36,11 +40,11 @@ void TimerManagerInit(void);
 
 int AddTimer(TimerEvent_t* timer);
 
-void SetTimer(TimerEvent_t* timer, unsigned long timeout, bool is_interval, void (*callback)(void));
+void SetTimer(TimerEvent_t* timer, unsigned long timeout, void (*callback)(void));
 
 void StopTimer(TimerEvent_t *timer);
 
-void ResetTimer(TimerEvent_t *timer);
+void StartTimer(TimerEvent_t *timer);
 
 void DeleteTimer(TimerEvent_t *timer);
 

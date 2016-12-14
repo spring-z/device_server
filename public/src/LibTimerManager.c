@@ -33,6 +33,7 @@ typedef struct
  */
 
 static TimerHead_t timerListHead;
+static unsigned long tick;
 
 /*********************************************************************
  * functions 
@@ -40,24 +41,17 @@ static TimerHead_t timerListHead;
 static int TimerExist( TimerEvent_t *timer);
 
 
-
-
 void TimerUpdate(unsigned short msec)
 {
 	TimerEvent_t* current = timerListHead.header;
+	tick += msec;
 	
 	while(current != NULL)
 	{
 		if(current->open == true)
 		{
-			current->tick += msec;
-			if(current->tick >= current->reload)
-			{
+			if(time_after_eq(tick,current->timeout))
 				current->callback();
-				current->tick = 0;
-				if(current->interval == false)
-					current->open = false;
-			}
 		}
 		current = current->next;
 	}
@@ -85,9 +79,7 @@ int AddTimer(TimerEvent_t* timer)
 	}
 
 	timer->open = false;
-	timer->interval = false;
-	timer->tick = 0;
-	timer->reload = 0;
+	timer->timeout = 0;
 	timer->callback = NULL;
 	timer->next = NULL;
 
@@ -108,14 +100,14 @@ int AddTimer(TimerEvent_t* timer)
 	return 1;
 }
 
-void SetTimer(TimerEvent_t* timer, unsigned long timeout, bool is_interval, void (*callback)(void))
+void SetTimer(TimerEvent_t* timer, unsigned long timeout, void (*callback)(void))
 {
 	HAL_DISABLE_INTERRUPTS();
 	
-	timer->interval = is_interval;
-	timer->reload = timeout;
+	AddTimer(timer);
+	
+	timer->timeout = tick + timeout;
 	timer->callback = callback;
-	timer->tick = 0;
 	timer->open = true;
 	
 	HAL_ENABLE_INTERRUPTS();
@@ -127,9 +119,9 @@ void StopTimer(TimerEvent_t *timer)
 }
 
 
-void ResetTimer(TimerEvent_t *timer)
+void StartTimer(TimerEvent_t *timer)
 {
-	timer->tick = 0;
+	timer->open = true;
 }
 
 
